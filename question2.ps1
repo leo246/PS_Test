@@ -41,18 +41,22 @@ Start-Transcript -path $trayport_test_path\transcript.txt -append
 $targets = @('server1','server2')
 
 Foreach ($target in $targets){
+    #Set Source and destination variables
     $source = "\\localhost\C$\trayport_test_2\$target\logs\"
     $destination = "\\localhost\C$\trayport_test_2\backups\$target\logs"
 
+    # Verify if destination path exists, and create if not
     If (!(test-path -path $destination)){
         New-Item -ItemType Directory -Force -Path $destination
     }
 
+    # Enumerate files in the Source folder, where the files are older that today
     $files = Get-ChildItem -Path $source | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt (Get-Date).Date }
 
     Foreach ($file in $files) {
         Start-Job -ScriptBlock {
             param($source, $destination)
+            #Copy files enumerated to destination folder
             Copy-Item -Path $source -Destination $destination
         } -ArgumentList $file.FullName, $destination, $target
     }
