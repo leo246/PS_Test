@@ -21,9 +21,11 @@ param(
 
 $ScriptBlock = {
     param($Server, $ServiceName)
-    
+
+    # get the service
     $Service = Get-Service -ComputerName $Server -Name $ServiceName -ErrorAction SilentlyContinue
-    
+
+    # If the service exists on server, force a restart of service
     If ($Service) {
         Write-Host "Restarting service $ServiceName on server $Server"
         Get-Service -ComputerName $Server -Name $ServiceName | restart-service -Force -ErrorAction SilentlyContinue
@@ -36,8 +38,10 @@ $ScriptBlock = {
 $StartTime = Get-Date
 
 foreach ($Server in $ServerList) {
-    
+
+    # Get service from each specified server
     foreach ($ServiceName in $ServiceNameList) {
+        # For each service specified, run scriptblock to restart each
         Start-Job -ScriptBlock $ScriptBlock -ArgumentList $Server, $ServiceName
         
         while ((Get-Job -State Running).Count -ge 3) {
