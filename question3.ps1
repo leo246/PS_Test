@@ -26,7 +26,7 @@ $ScriptBlock = {
     
     If ($Service) {
         Write-Host "Restarting service $ServiceName on server $Server"
-        Restart-Service -ComputerName $Server -Name $ServiceName -Force -ErrorAction SilentlyContinue
+        Get-Service -ComputerName $Server -Name $ServiceName | restart-service -Force -ErrorAction SilentlyContinue
     }
     Else {
         Write-Host "Service $ServiceName not found on server $Server"
