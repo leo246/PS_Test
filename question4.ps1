@@ -30,8 +30,8 @@ Foreach ($VM in $DatastoreVMs) {
     $VM_DN = Get-ADComputer $vm.name -Properties * -ErrorAction SilentlyContinue
     # Check if the computer is not in the specified OU
     if ($VM_DN.DistinguishedName -notlike "*,$ou") {
-        # Print the distinguished name of the computer
-        Write-Output $VM_DN.DistinguishedName
+        # Print the name of the computer
+        Write-Output $VM_DN.Name
     }
 }
 
