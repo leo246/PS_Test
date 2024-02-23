@@ -16,16 +16,22 @@ property names, pseudo-code is acceptable
 
 
 Import-Module VMware.VimAutomation.Core
+Import-Module ActiveDirectory
+
 
 $vSphereSrv = "vSphere.trayport.com"
 Connect-VIServer -Server $vSphereSrv
 
 $DatastoreVMs = Get-Datastore 'P2' | Get-VM
 
+$OU = "OU=P2,OU=Computers,DC=trayport,DC=com"
 
-Foreach ($Vm in $DatastoreVMs) {
-    $distinguishedName = (Get-ADComputer -Identity $Vm.name).DistinguishedName | where {$_.DistinguishedName -notlike "OU=P2,OU=Computers,DC=trayport,DC=com"}
-    Write-Output $distinguishedName
+Foreach ($VM in $DatastoreVMs) {
+    $VM_DN = Get-ADComputer $vm.name -Properties * -ErrorAction SilentlyContinue
+    # Check if the computer is not in the specified OU
+    if ($VM_DN.DistinguishedName -notlike "*,$ou") {
+        # Print the distinguished name of the computer
+        Write-Output $VM_DN.DistinguishedName
 }
 
 Disconnect-VIServer -Server $vSphereSrv -Confirm:$false
