@@ -32,6 +32,7 @@ Foreach ($VM in $DatastoreVMs) {
     if ($VM_DN.DistinguishedName -notlike "*,$ou") {
         # Print the distinguished name of the computer
         Write-Output $VM_DN.DistinguishedName
+    }
 }
 
 Disconnect-VIServer -Server $vSphereSrv -Confirm:$false
